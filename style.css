@@ -240,3 +240,33 @@ body {
     font-size: 28px;
     text-transform: capitalize;
 }
+.row-header {
+    display: flex;
+    justify-content: space-between; /* Pushes title to left, link to right */
+    align-items: center;
+    padding-right: 20px;
+    margin-bottom: 15px;
+}
+
+.row-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    margin: 0; /* Reset margins for flex alignment */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.view-all-link {
+    color: #ccff00; /* Neon yellow */
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: bold;
+    transition: 0.3s;
+    opacity: 0.8;
+}
+
+.view-all-link:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
