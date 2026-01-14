@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore - MyFlix</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background-color: #141414;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+        }
+
+        /* THE FIX: This creates a grid with enough vertical space */
+        .explore-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); 
+            /* The 40px below is the vertical gap between rows */
+            gap: 40px 15px; 
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .card {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .card img {
+            width: 100%;
+            height: 165px; /* Fixed height for uniformity */
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .card h4 {
+            font-size: 11px;
+            margin-top: 10px;
+            text-align: center;
+            color: #eee;
+            /* This ensures the title has its own 'box' and doesn't leak into the next movie */
+            min-height: 30px; 
+            line-height: 1.2;
+        }
+    </style>
+</head>
+
+<body>
+    <header style="display: flex; align-items: center; padding: 10px;">
+        <button onclick="window.location.href='index.html'" style="background: none; border: 1px solid white; color: white; padding: 5px 15px; border-radius: 5px; cursor: pointer;"> ❮ Back</button>
+        <h1 id="page-title" style="margin-left: 20px; font-size: 24px;">Explore</h1>
+    </header>
+
+    <div id="explore-grid" class="explore-grid">
+        </div>
+<div id="pagination-bar" style="display: flex; justify-content: center; align-items: center; gap: 10px; padding: 40px 0;">
+    <button onclick="changePage(-1)" id="prevBtn" style="background:#333; color:white; border:none; padding:10px; border-radius:5px;">Prev</button>
+    
+    <span id="pageNumber" style="font-weight:bold; font-size: 18px;">Page 1</span>
+    
+    <button onclick="changePage(1)" id="nextBtn" style="background:#333; color:white; border:none; padding:10px; border-radius:5px;">Next</button>
+</div>
+
+
+    <script>
+       // 1. Setup Variables
+const urlParams = new URLSearchParams(window.location.search);
+const type = urlParams.get('type') || 'movie';
+const API_KEY = 'd86303cd506472b7fb4757bb3d4740ec'; // <--- PUT YOUR KEY HERE!
+const IMG_URL = 'https://image.tmdb.org/t/p/w500';
+
+let currentPage = 1; // Start at page 1
+
+// 2. Function to load the data for a specific page
+async function loadExplore(page) {
+    const res = await fetch(`https://api.themoviedb.org/3/${type}/popular?api_key=${API_KEY}&page=${page}`);
+    const data = await res.json();
+    const grid = document.getElementById('explore-grid');
+    
+    // Clear the grid so we don't just add to the bottom
+    grid.innerHTML = '';
+
+    data.results.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `<img src="${IMG_URL + item.poster_path}"><h4>${item.title || item.name}</h4>`;
+        grid.appendChild(card);
+    });
+
+    // Update the page number text on the screen
+    document.getElementById('pageNumber').innerText = `Page ${page}`;
+    
+    // Hide the "Prev" button if we are on page 1
+    document.getElementById('prevBtn').style.visibility = page === 1 ? 'hidden' : 'visible';
+    
+    // Scroll back to the top of the page smoothly
+    window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+// 3. Function to change the page
+function changePage(direction) {
+    currentPage += direction;
+    loadExplore(currentPage);
+}
+
+// 4. Update the Page Title (Movies or Shows)
+document.getElementById('page-title').innerText = type === 'movie' ? 'Trending Movies' : 'Trending TV Shows';
+
+// Start by loading page 1
+loadExplore(currentPage);
+    </script>
+</body>
+</html>
