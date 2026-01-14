@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">  
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MyFlix</title>
@@ -8,6 +9,17 @@
 </head>
 
 <body>
+
+<div class="nav-auth-container" style="position: absolute; top: 15px; right: 20px; z-index: 1000;">
+    <div id="user-profile-btn" class="profile-circle">
+        <i id="logged-out-icon" class="fa-regular fa-circle-user"></i>
+        
+        <div id="avatar-container" style="display: none; width: 100%; height: 100%; border-radius: 50%; overflow: hidden;">
+            <img id="logged-in-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" 
+                 style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+    </div>
+</div>
 
     <div class="hero-container">
         <div class="slider-window">
@@ -60,7 +72,7 @@
         <iframe id="video-iframe" src="" frameborder="0" allowfullscreen></iframe>
     </div>
 
-    <script src="script.js"></script>
+   <script type="module" src="script.js"></script>
 </body>
 
 </html>

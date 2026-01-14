@@ -198,3 +198,79 @@ function closePlayer() {
     document.getElementById('video-iframe').src = ""; 
 }
 startApp();
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+// Your Firebase Config (Same as before)
+const firebaseConfig = {
+  apiKey: "AIzaSyBRCZ76Axl5mk5ajLvEXIdtbP9VD4Ni0nQ",
+  authDomain: "myflix-a64b4.firebaseapp.com",
+  projectId: "myflix-a64b4",
+  storageBucket: "myflix-a64b4.firebasestorage.app",
+  messagingSenderId: "101704238237",
+  appId: "1:101704238237:web:6666079060abef8fc8c074"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// Check login status and update profile icon
+onAuthStateChanged(auth, (user) => {
+    const profileBtn = document.getElementById('user-profile-btn');
+    const userIcon = document.getElementById('user-icon');
+    const userAvatar = document.getElementById('user-avatar');
+
+    if (user) {
+        // USER LOGGED IN: Show a colored profile box
+        userIcon.style.display = "none";
+        userAvatar.style.display = "block";
+        
+        // Use a default colorful avatar (Netflix-style)
+        userAvatar.src = "https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png";
+        profileBtn.style.borderColor = "#e50914"; // Red ring around active profile
+        
+        // Clicking takes you to a "Logout" confirmation or Profile page
+        profileBtn.onclick = () => {
+            if(confirm("Do you want to logout?")) {
+                signOut(auth).then(() => location.reload());
+            }
+        };
+        console.log("Active user:", user.email);
+    } else {
+        // USER LOGGED OUT: Show grey silhouette
+        userIcon.style.display = "block";
+        userAvatar.style.display = "none";
+        profileBtn.style.background = "#333";
+        profileBtn.style.borderColor = "transparent";
+        profileBtn.onclick = () => window.location.href = 'auth.html';
+    }
+})
+// This checks if a user is logged in or out
+onAuthStateChanged(auth, (user) => {
+    const loginIcon = document.getElementById('logged-out-icon');
+    const avatarContainer = document.getElementById('avatar-container');
+    const profileBtn = document.getElementById('user-profile-btn');
+
+    if (user) {
+        // --- LOGGED IN ---
+        loginIcon.style.display = "none";
+        avatarContainer.style.display = "block";
+        profileBtn.classList.add('profile-logged-in');
+        
+        profileBtn.onclick = () => {
+            if(confirm("Logout of your account?")) {
+                signOut(auth).then(() => location.reload());
+            }
+        };
+    } else {
+        // --- LOGGED OUT ---
+        loginIcon.style.display = "block";
+        avatarContainer.style.display = "none";
+        profileBtn.classList.remove('profile-logged-in');
+        
+        profileBtn.onclick = () => {
+            window.location.href = 'auth.html';
+        };
+    }
+});

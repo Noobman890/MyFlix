@@ -294,3 +294,31 @@ body {
 .view-all-link:hover {
     color: white !important;
 }
+.profile-circle {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1); /* Slight visible circle so you see the button */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.profile-circle i {
+    color: white;
+    font-size: 22px; /* This is the OnStream look */
+}
+
+/* Force the avatar to be a circle even if the image is square */
+#avatar-container img {
+    border-radius: 50%;
+}
+
+/* The Lime Glow for Logged In */
+.profile-logged-in {
+    border: 2px solid #ccff00 !important;
+    box-shadow: 0 0 10px rgba(204, 255, 0, 0.4);
+}

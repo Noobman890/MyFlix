@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyFlix | Authentication</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #e50914;
+            --accent-color: #ccff00; /* OnStream Lime */
+            --glass-bg: rgba(20, 20, 20, 0.8);
+        }
+
+        body {
+            background: radial-gradient(circle at top, #2b2b2b 0%, #000000 100%);
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: white;
+        }
+
+        .auth-card {
+            width: 90%;
+            max-width: 400px;
+            padding: 40px 30px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+        }
+
+        h2 {
+            font-weight: 400;
+            margin-bottom: 30px;
+            color: #efefef;
+        }
+
+        .input-box {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .input-box input {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: 0.3s;
+        }
+
+        .input-box input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .input-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .eye-btn {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .main-btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--primary-color);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: transform 0.2s;
+        }
+
+        .main-btn:active { transform: scale(0.98); }
+
+        .switch-text {
+            margin-top: 25px;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        .switch-text span {
+            color: var(--accent-color);
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .footer-link {
+            display: block;
+            margin-top: 30px;
+            color: rgba(255, 255, 255, 0.3);
+            text-decoration: none;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="auth-card">
+        <div class="logo">MyFlix</div>
+        <h2 id="title">Welcome Back</h2>
+
+        <div class="input-box">
+            <i class="fa-solid fa-envelope"></i>
+            <input type="email" id="email" placeholder="Email Address">
+        </div>
+
+        <div class="input-box">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" id="password" placeholder="Password">
+            <i class="fa-regular fa-eye eye-btn" id="togglePassword" onclick="togglePasswordVisibility()"></i>
+        </div>
+
+        <button class="main-btn" id="action-btn" onclick="handleAuth()">Sign In</button>
+
+        <div class="switch-text">
+            <span id="toggle-msg">New to MyFlix?</span> 
+            <span onclick="toggleMode()" id="toggle-action">Sign up now.</span>
+        </div>
+
+        <a href="index.html" class="footer-link">Not now? Return to Browse</a>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBRCZ76Axl5mk5ajLvEXIdtbP9VD4Ni0nQ",
+            authDomain: "myflix-a64b4.firebaseapp.com",
+            projectId: "myflix-a64b4",
+            storageBucket: "myflix-a64b4.firebasestorage.app",
+            messagingSenderId: "101704238237",
+            appId: "1:101704238237:web:6666079060abef8fc8c074"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        let isLogin = true;
+
+        window.toggleMode = () => {
+            isLogin = !isLogin;
+            document.getElementById('title').innerText = isLogin ? "Welcome Back" : "Create Account";
+            document.getElementById('action-btn').innerText = isLogin ? "Sign In" : "Get Started";
+            document.getElementById('toggle-msg').innerText = isLogin ? "New to MyFlix?" : "Already a member?";
+            document.getElementById('toggle-action').innerText = isLogin ? "Sign up now." : "Sign in here.";
+        };
+
+        window.togglePasswordVisibility = () => {
+            const pass = document.getElementById('password');
+            const icon = document.getElementById('togglePassword');
+            if (pass.type === 'password') {
+                pass.type = 'text';
+                icon.className = 'fa-regular fa-eye-slash eye-btn';
+            } else {
+                pass.type = 'password';
+                icon.className = 'fa-regular fa-eye eye-btn';
+            }
+        };
+
+        window.handleAuth = async () => {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            if(!email || !password) return alert("Please fill all fields");
+
+            try {
+                if(isLogin) {
+                    await signInWithEmailAndPassword(auth, email, password);
+                } else {
+                    await createUserWithEmailAndPassword(auth, email, password);
+                }
+                window.location.href = "index.html";
+            } catch (err) { alert(err.message); }
+        };
+    </script>
+</body>
+</html>
