@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+   <link rel="apple-touch-icon" href="icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">  
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,13 +14,28 @@
 
 <body>
 
-<div class="nav-auth-container" style="position: absolute; top: 15px; right: 20px; z-index: 1000;">
-    <div id="user-profile-btn" class="profile-circle">
-        <i id="logged-out-icon" class="fa-regular fa-circle-user"></i>
-        
-        <div id="avatar-container" style="display: none; width: 100%; height: 100%; border-radius: 50%; overflow: hidden;">
-            <img id="logged-in-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" 
-                 style="width: 100%; height: 100%; object-fit: cover;">
+<div class="top-nav" style="position: fixed; top: 0; left: 0; width: 100%; height: 65px; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; z-index: 1000; background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 100%); box-sizing: border-box;">
+    
+    <div class="logo-container" onclick="location.reload()" style="cursor: pointer; display: flex; align-items: center; gap: 10px;">
+        <div style="background: #e50914; width: 35px; height: 35px; border-radius: 8px; display: flex; justify-content: center; align-items: center; box-shadow: 0 0 15px rgba(229, 9, 20, 0.5);">
+            <i class="fa-solid fa-play" style="color: white; font-size: 18px; margin-left: 3px;"></i>
+        </div>
+        <span style="color: white; font-size: 22px; font-weight: 900; letter-spacing: -1px; font-family: 'Arial Black', sans-serif;">MYFLIX</span>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 15px;">
+        <div class="search-container">
+            <div class="search-box" id="searchBox">
+                <i class="fa-solid fa-magnifying-glass" onclick="focusSearch()"></i>
+                <input type="text" id="movie-search" placeholder="Search..." oninput="searchMovies()">
+            </div>
+        </div>
+
+        <div id="user-profile-btn" class="profile-circle">
+            <i id="logged-out-icon" class="fa-regular fa-circle-user"></i>
+            <div id="avatar-container" style="display: none; width: 100%; height: 100%; border-radius: 50%; overflow: hidden;">
+                <img id="logged-in-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
         </div>
     </div>
 </div>

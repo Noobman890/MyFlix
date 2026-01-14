@@ -322,3 +322,57 @@ body {
     border: 2px solid #ccff00 !important;
     box-shadow: 0 0 10px rgba(204, 255, 0, 0.4);
 }
+/* Search Box Styling */
+.search-box {
+    position: relative;
+    width: 40px; /* Hidden state / Circle only */
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* Expansion state when tapped */
+.search-box:focus-within {
+    width: 220px;
+    background: rgba(255, 255, 255, 0.2);
+    border-color: #ccff00; /* OnStream Lime Green */
+}
+
+.search-box i {
+    min-width: 40px;
+    text-align: center;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.search-box input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: white;
+    font-size: 16px;
+    padding-right: 15px;
+    opacity: 0; /* Hidden when closed */
+    transition: opacity 0.3s;
+}
+
+.search-box:focus-within input {
+    opacity: 1; /* Shows text when expanded */
+}
+body {
+    padding-top: 80px; /* This gives room for the new logo bar */
+}
+
+/* Make sure the logo looks sharp on mobile */
+.logo-container span {
+    text-transform: uppercase;
+}

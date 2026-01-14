@@ -274,3 +274,24 @@ onAuthStateChanged(auth, (user) => {
         };
     }
 });
+// Function to handle the search filtering
+window.searchMovies = function() {
+    const term = document.getElementById('movie-search').value.toLowerCase();
+    const movieCards = document.querySelectorAll('.movie-card'); // Make sure your movie cards have this class
+
+    movieCards.forEach(card => {
+        // This looks at the title inside each card
+        const title = card.querySelector('h3').innerText.toLowerCase();
+        
+        if (title.includes(term)) {
+            card.style.display = "block";
+        } else {
+            card.style.display = "none";
+        }
+    });
+};
+
+// Helper to focus the input when clicking the icon
+window.focusSearch = function() {
+    document.getElementById('movie-search').focus();
+};
