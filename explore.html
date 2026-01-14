@@ -3,114 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Explore - MyFlix</title>
+    <title>Explore - Movie App</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        body {
-            background-color: #141414;
-            color: white;
-            font-family: Arial, sans-serif;
-            margin: 0;
-        }
-
-        /* THE FIX: This creates a grid with enough vertical space */
-        .explore-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); 
-            /* The 40px below is the vertical gap between rows */
-            gap: 40px 15px; 
-            padding: 20px;
-            margin-top: 20px;
-        }
-
-        .card {
+        /* Extra styles for the pagination buttons */
+        .pagination {
             display: flex;
-            flex-direction: column;
-            width: 100%;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 40px 0;
         }
-
-        .card img {
-            width: 100%;
-            height: 165px; /* Fixed height for uniformity */
-            object-fit: cover;
-            border-radius: 8px;
+        .nav-btn {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
         }
-
-        .card h4 {
-            font-size: 11px;
-            margin-top: 10px;
-            text-align: center;
-            color: #eee;
-            /* This ensures the title has its own 'box' and doesn't leak into the next movie */
-            min-height: 30px; 
-            line-height: 1.2;
-        }
+        .nav-btn:hover { background: #ccff00; color: black; }
+        .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        #page-num { font-size: 18px; font-weight: bold; color: #ccff00; }
     </style>
 </head>
-
 <body>
-    <header style="display: flex; align-items: center; padding: 10px;">
-        <button onclick="window.location.href='index.html'" style="background: none; border: 1px solid white; color: white; padding: 5px 15px; border-radius: 5px; cursor: pointer;"> ❮ Back</button>
-        <h1 id="page-title" style="margin-left: 20px; font-size: 24px;">Explore</h1>
-    </header>
 
-    <div id="explore-grid" class="explore-grid">
-        </div>
-<div id="pagination-bar" style="display: flex; justify-content: center; align-items: center; gap: 10px; padding: 40px 0;">
-    <button onclick="changePage(-1)" id="prevBtn" style="background:#333; color:white; border:none; padding:10px; border-radius:5px;">Prev</button>
+    <div style="padding: 20px 40px; display: flex; justify-content: space-between; align-items: center;">
+        <button onclick="window.location.href='index.html'" style="background: #333; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">← BACK TO HOME</button>
+        <h1 id="explore-title" class="row-title" style="margin: 0; color: #ccff00;">Explore</h1>
+        <div style="width: 100px;"></div> </div>
     
-    <span id="pageNumber" style="font-weight:bold; font-size: 18px;">Page 1</span>
-    
-    <button onclick="changePage(1)" id="nextBtn" style="background:#333; color:white; border:none; padding:10px; border-radius:5px;">Next</button>
-</div>
+    <div id="explore-grid"></div>
 
+    <div class="pagination">
+        <button id="prev-btn" class="nav-btn" onclick="changePage(-1)">PREV</button>
+        <span id="page-num">Page 1</span>
+        <button id="next-btn" class="nav-btn" onclick="changePage(1)">NEXT</button>
+    </div>
+
+    <div id="player-overlay" class="overlay">
+        <button class="close-btn" onclick="closePlayer()">✕ Close</button>
+        <iframe id="video-iframe" src="" frameborder="0" allowfullscreen></iframe>
+    </div>
 
     <script>
-       // 1. Setup Variables
-const urlParams = new URLSearchParams(window.location.search);
-const type = urlParams.get('type') || 'movie';
-const API_KEY = 'd86303cd506472b7fb4757bb3d4740ec'; // <--- PUT YOUR KEY HERE!
-const IMG_URL = 'https://image.tmdb.org/t/p/w500';
+        const API_KEY = 'd86303cd506472b7fb4757bb3d4740ec';
+        const IMG_URL = 'https://image.tmdb.org/t/p/w500';
 
-let currentPage = 1; // Start at page 1
+        const params = new URLSearchParams(window.location.search);
+        const type = params.get('type') || 'movie';
+        const category = params.get('category') || 'popular';
+        
+        let currentPage = 1;
 
-// 2. Function to load the data for a specific page
-async function loadExplore(page) {
-    const res = await fetch(`https://api.themoviedb.org/3/${type}/popular?api_key=${API_KEY}&page=${page}`);
-    const data = await res.json();
-    const grid = document.getElementById('explore-grid');
-    
-    // Clear the grid so we don't just add to the bottom
-    grid.innerHTML = '';
+        async function loadExplorePage(page) {
+            window.scrollTo(0, 0); // Scroll to top when changing page
+            
+            let displayTitle = "Trending";
+            if(category === 'now_playing') displayTitle = "New Release";
+            if(category === 'on_the_air') displayTitle = "Airing Now";
+            
+            document.getElementById('explore-title').innerText = `${displayTitle} ${type === 'movie' ? 'Movies' : 'TV Shows'}`;
+            document.getElementById('page-num').innerText = `Page ${page}`;
 
-    data.results.forEach(item => {
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `<img src="${IMG_URL + item.poster_path}"><h4>${item.title || item.name}</h4>`;
-        grid.appendChild(card);
-    });
+            try {
+                const res = await fetch(`https://api.themoviedb.org/3/${type}/${category}?api_key=${API_KEY}&page=${page}`);
+                const data = await res.json();
+                
+                // Disable prev button if on page 1
+                document.getElementById('prev-btn').disabled = (page === 1);
+                // Disable next button if at end
+                document.getElementById('next-btn').disabled = (page >= data.total_pages);
 
-    // Update the page number text on the screen
-    document.getElementById('pageNumber').innerText = `Page ${page}`;
-    
-    // Hide the "Prev" button if we are on page 1
-    document.getElementById('prevBtn').style.visibility = page === 1 ? 'hidden' : 'visible';
-    
-    // Scroll back to the top of the page smoothly
-    window.scrollTo({top: 0, behavior: 'smooth'});
-}
+                displayResults(data.results);
+            } catch (error) {
+                console.error("Error loading explore page:", error);
+            }
+        }
 
-// 3. Function to change the page
-function changePage(direction) {
-    currentPage += direction;
-    loadExplore(currentPage);
-}
+        function displayResults(items) {
+            const grid = document.getElementById('explore-grid');
+            grid.innerHTML = '';
 
-// 4. Update the Page Title (Movies or Shows)
-document.getElementById('page-title').innerText = type === 'movie' ? 'Trending Movies' : 'Trending TV Shows';
+            items.forEach(item => {
+                const title = item.title || item.name;
+                const dateStr = item.release_date || item.first_air_date || "";
+                const year = dateStr ? dateStr.split('-')[0] : "N/A";
+                const rating = item.vote_average ? item.vote_average.toFixed(1) : "N/A";
 
-// Start by loading page 1
-loadExplore(currentPage);
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-img-container">
+                        <img src="${IMG_URL + item.poster_path}" alt="${title}">
+                    </div>
+                    <div class="card-info">
+                        <h4 class="card-title">${title}</h4>
+                        <div class="card-meta">
+                            <span style="color: #ccff00; font-weight: bold;">⭐ ${rating}</span>
+                            <span style="color: #444;">•</span>
+                            <span class="card-year">${year}</span>
+                        </div>
+                    </div>
+                `;
+                card.onclick = () => playMedia(item.id, type);
+                grid.appendChild(card);
+            });
+        }
+
+        function changePage(step) {
+            currentPage += step;
+            loadExplorePage(currentPage);
+        }
+
+        function playMedia(id, type) {
+            const overlay = document.getElementById('player-overlay');
+            const iframe = document.getElementById('video-iframe');
+            iframe.src = type === 'movie' ? 
+                `https://vidsrc.cc/v2/embed/movie/${id}` : 
+                `https://vidsrc.cc/v2/embed/tv/${id}/1/1`;
+            overlay.style.display = 'block';
+        }
+
+        function closePlayer() {
+            document.getElementById('player-overlay').style.display = 'none';
+            document.getElementById('video-iframe').src = ""; 
+        }
+
+        loadExplorePage(currentPage);
     </script>
 </body>
 </html>
