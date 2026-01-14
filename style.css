@@ -240,33 +240,57 @@ body {
     font-size: 28px;
     text-transform: capitalize;
 }
+/* Container to keep Title and Link on one single line */
+/* Container to keep Title and Link on one single line */
 .row-header {
     display: flex;
-    justify-content: space-between; /* Pushes title to left, link to right */
+    flex-direction: row; /* Force horizontal side-by-side */
+    justify-content: space-between;
     align-items: center;
-    padding-right: 20px;
-    margin-bottom: 15px;
+    padding: 0 15px; 
+    margin-top: 30px;
+    margin-bottom: 10px;
+    width: 100%;
+    box-sizing: border-box; 
 }
 
 .row-title {
-    font-size: 20px;
+    font-size: 18px; 
     font-weight: bold;
-    color: white;
-    margin: 0; /* Reset margins for flex alignment */
+    color: white !important; 
+    margin: 0;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    white-space: nowrap; 
+    overflow: hidden;
+    text-overflow: ellipsis; 
+}
+
+/* Red line fix for iPhone */
+.row-title::before {
+    content: "";
+    display: inline-block;
+    width: 4px;
+    height: 18px;
+    background-color: #e50914;
+    margin-right: 10px;
+    vertical-align: middle;
 }
 
 .view-all-link {
-    color: #ccff00; /* Neon yellow */
-    text-decoration: none;
-    font-size: 14px;
+    color: #ccff00 !important; 
+    text-decoration: none !important; 
+    font-size: 13px;
     font-weight: bold;
-    transition: 0.3s;
-    opacity: 0.8;
+    white-space: nowrap; 
+    margin-left: 10px;
+    flex-shrink: 0; 
+
+    /* FIXED: Standard property for compatibility */
+    appearance: none;
+    -webkit-appearance: none; 
+    -moz-appearance: none;
 }
 
 .view-all-link:hover {
-    opacity: 1;
-    text-decoration: underline;
+    color: white !important;
 }

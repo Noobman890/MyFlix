@@ -8,33 +8,33 @@ let isTransitioning = false;
 
 async function startApp() {
     try {
-        // 1. Hero Banner (Trending today)
+        // 1. Hero Banner
         const hRes = await fetch(`https://api.themoviedb.org/3/trending/all/day?api_key=${API_KEY}`);
         const hData = await hRes.json();
         setupHero(hData.results.slice(0, 10));
 
-        // 2. New Movie Releases (In Theaters/Digital)
+        // 2. Row 1: New Movie Releases -> target: 'new-releases-row'
         const nRes = await fetch(`https://api.themoviedb.org/3/movie/now_playing?api_key=${API_KEY}&region=US`);
         const nData = await nRes.json();
         fillShelf(nData.results.slice(0, 10), 'new-releases-row', 'movie');
 
-        // 3. Airing Now (TV Shows with episodes airing this week)
+        // 3. Row 2: Airing Now (TV) -> target: 'new-tv-row'
         const ntRes = await fetch(`https://api.themoviedb.org/3/tv/on_the_air?api_key=${API_KEY}`);
         const ntData = await ntRes.json();
         fillShelf(ntData.results.slice(0, 10), 'new-tv-row', 'tv');
 
-        // 4. Trending Movies (All-time popular)
+        // 4. Row 3: Trending Movies -> target: 'movie-row'
         const mRes = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}`);
         const mData = await mRes.json();
         fillShelf(mData.results.slice(0, 10), 'movie-row', 'movie');
 
-        // 5. Trending TV Shows (All-time popular)
+        // 5. Row 4: Trending TV Shows -> target: 'tv-row'
         const tRes = await fetch(`https://api.themoviedb.org/3/tv/popular?api_key=${API_KEY}`);
         const tData = await tRes.json();
         fillShelf(tData.results.slice(0, 10), 'tv-row', 'tv');
         
     } catch (error) {
-        console.error("Failed to fetch movie data:", error);
+        console.error("Error starting the app:", error);
     }
 }
 
